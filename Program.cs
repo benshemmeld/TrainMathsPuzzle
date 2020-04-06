@@ -9,10 +9,9 @@ namespace TrainMathsPuzzle
         private static int TrainPosition = 0;
         private static int FuelOnBoard = Capacity;
         private static int FuelUsed = Capacity;
-
         private static int StepAmount = 100;
-
         private static Dictionary<int, int> FuelOnSideOfTrack = new Dictionary<int, int>();
+        private static List<string> StepsTaken = new List<string>();
 
         static void Main(string[] args)
         {
@@ -31,6 +30,7 @@ namespace TrainMathsPuzzle
                         {
                             TrainPosition += StepAmount;
                             FuelOnBoard -= StepAmount;
+                            StepsTaken.Add($"Move forward {StepAmount} miles");
                         }
 
                         break;
@@ -41,6 +41,7 @@ namespace TrainMathsPuzzle
                         {
                             TrainPosition -= StepAmount;
                             FuelOnBoard -= StepAmount;
+                            StepsTaken.Add($"Move backward {StepAmount} miles");
 
                             if (TrainPosition == 0)
                             {
@@ -58,6 +59,7 @@ namespace TrainMathsPuzzle
                         {
                             FuelOnBoard -= amountToDrop;
                             FuelOnSideOfTrack[TrainPosition] += amountToDrop;
+                            StepsTaken.Add($"Drop {amountToDrop} miles of fuel");
                         }
                         else
                         {
@@ -74,6 +76,7 @@ namespace TrainMathsPuzzle
                         {
                             FuelOnBoard += amountToPickUp;
                             FuelOnSideOfTrack[TrainPosition] -= amountToPickUp;
+                            StepsTaken.Add($"Pick up {amountToPickUp} miles of fuel");
                         }
                         else
                         {
@@ -95,6 +98,7 @@ namespace TrainMathsPuzzle
                         FuelOnBoard = Capacity;
                         FuelUsed = 500;
                         FuelOnSideOfTrack = InitialiseFuelOnSideOfTrack();
+                        StepsTaken.Clear();
                         break;
                 }
 
@@ -108,6 +112,7 @@ namespace TrainMathsPuzzle
             {
                 FuelOnBoard += amountToAdd;
                 FuelUsed += amountToAdd;
+                StepsTaken.Add($"Added {amountToAdd} miles of fuel at the depot");
             }
             else
             {
@@ -129,16 +134,15 @@ namespace TrainMathsPuzzle
         private static void ShowStatus()
         {
             Console.Clear();
-
             Console.WriteLine($"Fuel Used: {FuelUsed}");
 
             //Headings
             WritePositionMessage("Depot");
             for (var position = StepAmount; position <= (800 - StepAmount); position += StepAmount)
             {
-                WritePositionMessage(position.ToString());
+                WritePositionMessage($"|{position}","-");
             }
-            WritePositionMessage("Party Town");
+            WritePositionMessage("Party Town!");
             Console.Write(Environment.NewLine);
 
 
@@ -148,7 +152,7 @@ namespace TrainMathsPuzzle
                 var message = "";
                 if (TrainPosition == position)
                 {
-                    message = $"T ({FuelOnBoard})";
+                    message = $"choo\xB2 ({FuelOnBoard})";
                 }
                 WritePositionMessage(message);
             }
@@ -172,13 +176,24 @@ namespace TrainMathsPuzzle
 
             if (TrainPosition == 800)
             {
-                Console.WriteLine("You made it to party town!");
+                Console.WriteLine("You made it to party town!!!");
             }
+
+            //Console.WriteLine();
+            //Console.WriteLine("Steps taken:");
+            //var stepCount = 1;
+            //foreach (var step in StepsTaken)
+            //{
+            //    Console.WriteLine($"{stepCount}. {step}");
+
+            //    stepCount++;
+            //}
         }
 
-        private static void WritePositionMessage(string message)
+        private static void WritePositionMessage(string message, string paddingCharacter = " ")
         {
-            Console.Write($"{message,-12}");
+            var output = $"{message,-12}".Replace(" ", paddingCharacter);
+            Console.Write(output);
         }
     }
 }
